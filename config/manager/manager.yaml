@@ -33,6 +33,10 @@ spec:
         - --leader-elect
         image: controller:latest
         name: manager
+
+        ## 由于不上传到镜像仓库， 所以这里以本地编译的版本为准
+        imagePullPolicy: IfNotPresent
+
         securityContext:
           allowPrivilegeEscalation: false
         livenessProbe:
