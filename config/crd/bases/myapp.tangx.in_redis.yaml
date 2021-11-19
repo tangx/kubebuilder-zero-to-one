@@ -38,10 +38,10 @@ spec:
             properties:
               port:
                 format: int32
+                maximum: 54321
+                minimum: 1234
                 type: integer
               replicas:
-                description: Foo is an example field of Redis. Edit redis_types.go
-                  to remove/update Foo string `json:"foo,omitempty"`
                 type: integer
             type: object
           status:
