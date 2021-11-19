@@ -18,6 +18,7 @@ package controllers
 
 import (
 	"context"
+	"fmt"
 
 	"k8s.io/apimachinery/pkg/runtime"
 	ctrl "sigs.k8s.io/controller-runtime"
@@ -25,6 +26,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/log"
 
 	myappv1 "github.com/tangx/k8s-operator-demo/api/v1"
+	v1 "github.com/tangx/k8s-operator-demo/api/v1"
 )
 
 // RedisReconciler reconciles a Redis object
@@ -50,6 +52,14 @@ func (r *RedisReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl
 	_ = log.FromContext(ctx)
 
 	// TODO(user): your logic here
+
+	redis := v1.Redis{}
+	err := r.Get(ctx, req.NamespacedName, &redis)
+	if err != nil {
+		return ctrl.Result{}, err
+	}
+
+	fmt.Println("得到crd redis 对象: ", redis)
 
 	return ctrl.Result{}, nil
 }
