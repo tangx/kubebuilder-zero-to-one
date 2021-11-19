@@ -13,4 +13,8 @@ resources:
   kind: Redis
   path: github.com/tangx/k8s-operator-demo/api/v1
   version: v1
+  webhooks:
+    defaulting: true
+    validation: true
+    webhookVersion: v1
 version: "3"
