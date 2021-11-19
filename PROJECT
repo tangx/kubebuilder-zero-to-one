@@ -1,0 +1,16 @@
+domain: tangx.in
+layout:
+- go.kubebuilder.io/v3
+projectName: k8s-operator-demo
+repo: github.com/tangx/k8s-operator-demo
+resources:
+- api:
+    crdVersion: v1
+    namespaced: true
+  controller: true
+  domain: tangx.in
+  group: myapp
+  kind: Redis
+  path: github.com/tangx/k8s-operator-demo/api/v1
+  version: v1
+version: "3"

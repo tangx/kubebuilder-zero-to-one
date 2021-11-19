@@ -1,0 +1,6 @@
+apiVersion: myapp.tangx.in/v1
+kind: Redis
+metadata:
+  name: redis-sample
+spec:
+  # TODO(user): Add fields here
