@@ -18,3 +18,20 @@ spec:
   replicas: 1
   port: 3333
 ```
+
+```bash
+# 安装
+make install
+
+# 卸载
+make uninstall
+```
+
+查看 crd
+
+```bash
+
+k get crd |grep tangx.in
+
+    redis.myapp.tangx.in                       2021-11-19T06:16:43Z
+```
