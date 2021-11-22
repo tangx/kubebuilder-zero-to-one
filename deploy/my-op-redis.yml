@@ -6,6 +6,6 @@ metadata:
   # name: tangx-in
 
 spec:
-  replicas: 1
+  replicas: 2
   image: "redis:5-alpine"
   port: 8333

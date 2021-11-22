@@ -59,13 +59,25 @@ func (r *RedisReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl
 	redis := v1.Redis{}
 	err := r.Get(ctx, req.NamespacedName, &redis)
 	if err != nil {
-		return ctrl.Result{}, err
+		return ctrl.Result{}, fmt.Errorf("Reconcile 获取 redis 失败: %v", err)
 	}
 
-	// fmt.Printf("得到crd redis 对象: %+v\n", redis)
+	// 打印 redis 对象
 	output(redis)
 
-	err = helper.CreateRedisPod(ctx, r.Client, &redis)
+	// 删除 逻辑
+	if !redis.DeletionTimestamp.IsZero() {
+
+		err = helper.DeleteRedis2(ctx, r.Client, &redis)
+		if err != nil {
+			return ctrl.Result{}, fmt.Errorf("删除 redis 失败:%v", err)
+		}
+
+		return ctrl.Result{}, nil
+	}
+
+	// 创建 逻辑
+	err = helper.CreateRedisPod2(ctx, r.Client, &redis)
 	if err != nil {
 		return ctrl.Result{}, fmt.Errorf("创建 redis pod 失败: %v", err)
 	}

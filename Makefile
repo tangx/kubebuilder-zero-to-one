@@ -134,3 +134,5 @@ endef
 
 docker.clean:
 	docker rmi `docker images -q -f dangling=true` || echo
+
+deploy.build: docker-build install deploy
