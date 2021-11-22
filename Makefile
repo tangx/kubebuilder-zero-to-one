@@ -68,7 +68,7 @@ build: generate fmt vet ## Build manager binary.
 
 .PHONY: run
 run: manifests generate fmt vet ## Run a controller from your host.
-	ENV=debug go run ./main.go
+	ENV=local go run ./main.go
 
 
 .PHONY: docker-build
@@ -130,3 +130,7 @@ GOBIN=$(PROJECT_DIR)/bin go get $(2) ;\
 rm -rf $$TMP_DIR ;\
 }
 endef
+
+
+docker.clean:
+	docker rmi `docker images -q -f dangling=true` || echo

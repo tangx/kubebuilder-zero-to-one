@@ -87,7 +87,7 @@ func main() {
 	}
 
 	// 本地测试可以注释
-	if env := os.Getenv("ENV"); env != "debug" {
+	if env := os.Getenv("ENV"); env != "local" {
 		if err = (&myappv1.Redis{}).SetupWebhookWithManager(mgr); err != nil {
 			setupLog.Error(err, "unable to create webhook", "webhook", "Redis")
 			os.Exit(1)
