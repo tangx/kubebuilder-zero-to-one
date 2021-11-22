@@ -85,7 +85,6 @@ ka -f deploy/
 //+kubebuilder:rbac:groups="资源组名称",resources=资源名称,verbs=get;list;watch;create;update;patch;delete（操作动作）
 ```
 
-
 为了要对 pod 具有操作权限， 需要对  增加对应的 kubebuilder 注解。
 
 ```go
@@ -97,7 +96,6 @@ func (r *RedisReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl
 ```
 
 这样我们实现的 operator 就可以对 pod 进行增删改等操作了。
-
 
 如果不知道 **资源组名称** 和 **资源名称**， 可以使用命令 `kubectl api-resources` 查看
 
@@ -125,6 +123,9 @@ kind: Deployment
 apiVersion: v1
 kind: Pod
 ```
+
+> https://kubernetes.io/zh/docs/reference/access-authn-authz/rbac/
+
 
 
 ## 3. 注释 webhook 方便测试
