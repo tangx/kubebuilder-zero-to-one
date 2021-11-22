@@ -33,6 +33,8 @@ type RedisSpec struct {
 	//+kubebuilder:validation:Minimum:=1234
 	//+kubebuilder:validation:Maximum:=54321
 	Port int32 `json:"port,omitempty"`
+
+	Image string `json:"image,omitempty"`
 }
 
 // RedisStatus defines the observed state of Redis

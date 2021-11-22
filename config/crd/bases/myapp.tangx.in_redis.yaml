@@ -36,6 +36,8 @@ spec:
           spec:
             description: RedisSpec defines the desired state of Redis
             properties:
+              image:
+                type: string
               port:
                 format: int32
                 maximum: 54321

@@ -2,9 +2,10 @@ apiVersion: myapp.tangx.in/v1
 kind: Redis
 
 metadata:
-  # name: my-op-redis
-  name: tangx-in
+  name: my-op-redis
+  # name: tangx-in
 
 spec:
   replicas: 1
+  image: "redis:5-alpine"
   port: 8333

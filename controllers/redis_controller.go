@@ -27,6 +27,7 @@ import (
 
 	myappv1 "github.com/tangx/k8s-operator-demo/api/v1"
 	v1 "github.com/tangx/k8s-operator-demo/api/v1"
+	"github.com/tangx/k8s-operator-demo/controllers/helper"
 )
 
 // RedisReconciler reconciles a Redis object
@@ -60,6 +61,11 @@ func (r *RedisReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl
 	}
 
 	fmt.Println("得到crd redis 对象: ", redis)
+
+	err = helper.CreateRedisPod2(ctx, r.Client, &redis)
+	if err != nil {
+		return ctrl.Result{}, fmt.Errorf("创建 redis pod 失败: %v", err)
+	}
 
 	return ctrl.Result{}, nil
 }
