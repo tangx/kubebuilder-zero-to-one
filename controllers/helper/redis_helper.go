@@ -15,8 +15,12 @@ import (
 func CreateRedisPod(ctx context.Context, client client.Client, config *appv1.Redis) error {
 	pod := &corev1.Pod{
 		ObjectMeta: metav1.ObjectMeta{
-			Name:      config.Name + fmt.Sprint(time.Now().Unix()),
+			Name:      fmt.Sprintf("%s-%d", config.Name, time.Now().Unix()),
 			Namespace: config.Namespace,
+			// 创建 OwnerReference
+			OwnerReferences: []metav1.OwnerReference{
+				ownerReference(*config),
+			},
 		},
 		Spec: corev1.PodSpec{
 			Containers: []corev1.Container{
@@ -58,4 +62,19 @@ func CreateRedisPod2(ctx context.Context, client client.Client, config *appv1.Re
 	}
 	// ctx := context.Background()
 	return client.Create(ctx, pod)
+}
+
+func ownerReference(config appv1.Redis) metav1.OwnerReference {
+	return metav1.OwnerReference{
+		APIVersion:         config.APIVersion,
+		Kind:               config.Kind,
+		Name:               config.Name,
+		UID:                config.UID,
+		Controller:         ptrBool(true),
+		BlockOwnerDeletion: ptrBool(true),
+	}
+}
+
+func ptrBool(b bool) *bool {
+	return &b
 }

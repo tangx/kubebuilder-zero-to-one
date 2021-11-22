@@ -18,6 +18,7 @@ package controllers
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 
 	"k8s.io/apimachinery/pkg/runtime"
@@ -61,9 +62,10 @@ func (r *RedisReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl
 		return ctrl.Result{}, err
 	}
 
-	fmt.Println("得到crd redis 对象: ", redis)
+	// fmt.Printf("得到crd redis 对象: %+v\n", redis)
+	output(redis)
 
-	err = helper.CreateRedisPod2(ctx, r.Client, &redis)
+	err = helper.CreateRedisPod(ctx, r.Client, &redis)
 	if err != nil {
 		return ctrl.Result{}, fmt.Errorf("创建 redis pod 失败: %v", err)
 	}
@@ -76,4 +78,14 @@ func (r *RedisReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
 		For(&myappv1.Redis{}).
 		Complete(r)
+}
+
+func output(v interface{}) {
+	data, err := json.Marshal(v)
+
+	if err != nil {
+		return
+	}
+
+	fmt.Printf("得到crd redis 对象: %s \n\n", data)
 }
