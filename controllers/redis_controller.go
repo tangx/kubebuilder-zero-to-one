@@ -27,7 +27,6 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/log"
 
 	myappv1 "github.com/tangx/k8s-operator-demo/api/v1"
-	v1 "github.com/tangx/k8s-operator-demo/api/v1"
 	"github.com/tangx/k8s-operator-demo/controllers/helper"
 )
 
@@ -59,7 +58,7 @@ func (r *RedisReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl
 
 	// TODO(user): your logic here
 
-	redis := v1.Redis{}
+	redis := myappv1.Redis{}
 	err := r.Get(ctx, req.NamespacedName, &redis)
 	if err != nil {
 		// 如果 err !=nil , k8s 调谐会不断重试。 因此找不到资源， 则直接返回 err=nil
