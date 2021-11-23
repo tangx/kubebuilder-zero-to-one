@@ -21,10 +21,16 @@ import (
 	"encoding/json"
 	"fmt"
 
+	corev1 "k8s.io/api/core/v1"
+	v1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/client-go/util/workqueue"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
+	"sigs.k8s.io/controller-runtime/pkg/event"
+	"sigs.k8s.io/controller-runtime/pkg/handler"
 	"sigs.k8s.io/controller-runtime/pkg/log"
+	"sigs.k8s.io/controller-runtime/pkg/source"
 
 	myappv1 "github.com/tangx/k8s-operator-demo/api/v1"
 	"github.com/tangx/k8s-operator-demo/controllers/helper"
@@ -40,6 +46,7 @@ type RedisReconciler struct {
 //+kubebuilder:rbac:groups=myapp.tangx.in,resources=redis/status,verbs=get;update;patch
 //+kubebuilder:rbac:groups=myapp.tangx.in,resources=redis/finalizers,verbs=update
 //+kubebuilder:rbac:groups="",resources=pods,verbs=get;list;watch;create;update;patch;delete
+//+kubebuilder:rbac:groups="",resources=services,verbs=get;list;watch;create;update;patch;delete
 
 // Reconcile is part of the main kubernetes reconciliation loop which aims to
 // move the current state of the cluster closer to the desired state.
@@ -75,7 +82,7 @@ func (r *RedisReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl
 	// IsZero 标识这个字段为 nil 或者 零值， 即非删除状态
 	// 删除状态则 取反
 	if !redis.DeletionTimestamp.IsZero() {
-		r.deleteReconcile(ctx, &redis)
+		return r.deleteReconcile(ctx, &redis)
 	}
 
 	// 缩容
@@ -91,7 +98,32 @@ func (r *RedisReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl
 func (r *RedisReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
 		For(&myappv1.Redis{}).
+		// 监听 pod 事件
+		Watches(
+			&source.Kind{
+				Type: &corev1.Pod{},
+			},
+			handler.Funcs{
+				DeleteFunc: r.podDeleteHandler,
+			},
+		).
+		Watches(
+			&source.Kind{
+				Type: &v1.Service{},
+			},
+			handler.Funcs{
+				DeleteFunc: r.podDeleteHandler,
+			},
+		).
 		Complete(r)
+}
+
+func (r *RedisReconciler) podDeleteHandler(e event.DeleteEvent, q workqueue.RateLimitingInterface) {
+
+	pname := e.Object.GetName()
+	pns := e.Object.GetNamespace()
+	fmt.Printf("Pod %s in NS %s 被删除\n", pname, pns)
+
 }
 
 func (r *RedisReconciler) increaseReconcile(ctx context.Context, redis *myappv1.Redis) (ctrl.Result, error) {
