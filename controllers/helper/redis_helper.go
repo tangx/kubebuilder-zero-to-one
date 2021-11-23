@@ -136,11 +136,18 @@ func DeleteRedis2(ctx context.Context, client client.Client, redis *appv1.Redis)
 	}
 
 	if isUpdated {
-		if err := client.Update(ctx, redis); err != nil {
-			return fmt.Errorf("更新 redis 失败: %v\n", err)
-		}
 
-		return client.Delete(ctx, redis)
+		// if err := client.Update(ctx, redis); err != nil {
+		// 	return fmt.Errorf("更新 redis 失败: %v\n", err)
+		// }
+
+		/*
+			当 finalizers 被清空后， k8s 会删除 redis instance
+			不需要手动删除
+		*/
+		// return client.Delete(ctx, redis)
+
+		return client.Update(ctx, redis)
 	}
 	return nil
 }

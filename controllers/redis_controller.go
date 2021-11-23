@@ -52,6 +52,9 @@ type RedisReconciler struct {
 // For more details, check Reconcile and its Result here:
 // - https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.10.0/pkg/reconcile
 func (r *RedisReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
+	fmt.Println("进入 redis Reconcile, 检查调谐状态")
+	defer fmt.Println("退出 redis Reconcile 调谐状态")
+
 	_ = log.FromContext(ctx)
 
 	// TODO(user): your logic here
@@ -59,9 +62,10 @@ func (r *RedisReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl
 	redis := v1.Redis{}
 	err := r.Get(ctx, req.NamespacedName, &redis)
 	if err != nil {
+		// 如果 err !=nil , k8s 调谐会不断重试。 因此找不到资源， 则直接返回 err=nil
 		// return ctrl.Result{}, fmt.Errorf("Reconcile 获取 redis 失败: %v", err)
 
-		// 找不到返回 nil， 否则删除后的资源会一直查找。 暂时没有发现怎么退出查找循环
+		// 找不到返回 nil，成功处理， 退出循环。
 		return ctrl.Result{}, nil
 	}
 
@@ -69,6 +73,8 @@ func (r *RedisReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl
 	output(redis)
 
 	// 删除 逻辑
+	// IsZero 标识这个字段为 nil 或者 零值， 即非删除状态
+	// 删除状态则 取反
 	if !redis.DeletionTimestamp.IsZero() {
 
 		err = helper.DeleteRedis2(ctx, r.Client, &redis)
