@@ -59,7 +59,10 @@ func (r *RedisReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl
 	redis := v1.Redis{}
 	err := r.Get(ctx, req.NamespacedName, &redis)
 	if err != nil {
-		return ctrl.Result{}, fmt.Errorf("Reconcile 获取 redis 失败: %v", err)
+		// return ctrl.Result{}, fmt.Errorf("Reconcile 获取 redis 失败: %v", err)
+
+		// 找不到返回 nil， 否则删除后的资源会一直查找。 暂时没有发现怎么退出查找循环
+		return ctrl.Result{}, nil
 	}
 
 	// 打印 redis 对象
