@@ -76,22 +76,16 @@ func (r *RedisReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl
 	// IsZero 标识这个字段为 nil 或者 零值， 即非删除状态
 	// 删除状态则 取反
 	if !redis.DeletionTimestamp.IsZero() {
-
-		err = helper.DeleteRedis2(ctx, r.Client, &redis)
-		if err != nil {
-			return ctrl.Result{}, fmt.Errorf("删除 redis 失败:%v", err)
-		}
-
-		return ctrl.Result{}, nil
+		r.deleteReconcile(ctx, &redis)
 	}
 
-	// 创建 逻辑
-	err = helper.CreateRedisPod2(ctx, r.Client, &redis)
-	if err != nil {
-		return ctrl.Result{}, fmt.Errorf("创建 redis pod 失败: %v", err)
+	// 缩容
+	if len(redis.Finalizers) > redis.Spec.Replicas {
+		return r.decreaseReconcile(ctx, &redis)
 	}
 
-	return ctrl.Result{}, nil
+	return r.increaseReconcile(ctx, &redis)
+
 }
 
 // SetupWithManager sets up the controller with the Manager.
@@ -99,6 +93,34 @@ func (r *RedisReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
 		For(&myappv1.Redis{}).
 		Complete(r)
+}
+
+func (r *RedisReconciler) increaseReconcile(ctx context.Context, redis *myappv1.Redis) (ctrl.Result, error) {
+
+	// 创建 逻辑
+	err := helper.CreateRedisPod2(ctx, r.Client, redis)
+	if err != nil {
+		return ctrl.Result{}, fmt.Errorf("创建 redis pod 失败: %v", err)
+	}
+
+	return ctrl.Result{}, nil
+}
+
+func (r *RedisReconciler) decreaseReconcile(ctx context.Context, redis *myappv1.Redis) (ctrl.Result, error) {
+
+	err := helper.DecreaseRedis2(ctx, r.Client, redis)
+
+	return ctrl.Result{}, err
+}
+
+func (r *RedisReconciler) deleteReconcile(ctx context.Context, redis *myappv1.Redis) (ctrl.Result, error) {
+
+	err := helper.DeleteRedis2(ctx, r.Client, redis)
+	if err != nil {
+		return ctrl.Result{}, fmt.Errorf("删除 redis 失败:%v", err)
+	}
+
+	return ctrl.Result{}, nil
 }
 
 func output(v interface{}) {

@@ -161,3 +161,23 @@ func deleteFromFinalizers(redis *appv1.Redis, name string) {
 		}
 	}
 }
+
+func DecreaseRedis2(ctx context.Context, client client.Client, redis *appv1.Redis) error {
+	isUpdated := false
+	for _, name := range redis.Finalizers[redis.Spec.Replicas:] {
+		pod := getPod2(redis, name)
+
+		if err := client.Delete(ctx, pod); err != nil {
+			return err
+		}
+
+		deleteFromFinalizers(redis, name)
+		isUpdated = true
+	}
+
+	if isUpdated {
+		return client.Update(ctx, redis)
+	}
+
+	return nil
+}
