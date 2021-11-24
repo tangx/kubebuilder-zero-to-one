@@ -81,6 +81,9 @@ func main() {
 	if err = (&controllers.RedisReconciler{
 		Client: mgr.GetClient(),
 		Scheme: mgr.GetScheme(),
+
+		// 添加事件记录名称
+		EventRecord: mgr.GetEventRecorderFor("RedisOperator"),
 	}).SetupWithManager(mgr); err != nil {
 		setupLog.Error(err, "unable to create controller", "controller", "Redis")
 		os.Exit(1)

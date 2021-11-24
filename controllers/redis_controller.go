@@ -25,6 +25,7 @@ import (
 	v1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/types"
+	"k8s.io/client-go/tools/record"
 	"k8s.io/client-go/util/workqueue"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
@@ -42,6 +43,9 @@ import (
 type RedisReconciler struct {
 	client.Client
 	Scheme *runtime.Scheme
+
+	// 添加事件
+	EventRecord record.EventRecorder
 }
 
 //+kubebuilder:rbac:groups=myapp.tangx.in,resources=redis,verbs=get;list;watch;create;update;patch;delete
@@ -144,6 +148,12 @@ func (r *RedisReconciler) podDeleteHandler(e event.DeleteEvent, q workqueue.Rate
 
 func (r *RedisReconciler) increaseReconcile(ctx context.Context, redis *myappv1.Redis) (ctrl.Result, error) {
 
+	// 添加事件日志
+	r.EventRecord.Event(redis,
+		corev1.EventTypeNormal, "扩容",
+		fmt.Sprintf("%s 副本数设置为 %d", redis.Name, redis.Spec.Replicas),
+	)
+
 	// 创建 逻辑
 	err := helper2.CreateRedisPod2(ctx, r.Client, redis, r.Scheme)
 	if err != nil {
@@ -155,12 +165,22 @@ func (r *RedisReconciler) increaseReconcile(ctx context.Context, redis *myappv1.
 
 func (r *RedisReconciler) decreaseReconcile(ctx context.Context, redis *myappv1.Redis) (ctrl.Result, error) {
 
+	r.EventRecord.Event(redis,
+		corev1.EventTypeWarning, "缩容",
+		fmt.Sprintf("%s 副本数设置为 %d", redis.Name, redis.Spec.Replicas),
+	)
+
 	err := helper2.DecreaseRedis2(ctx, r.Client, redis)
 
 	return ctrl.Result{}, err
 }
 
 func (r *RedisReconciler) deleteReconcile(ctx context.Context, redis *myappv1.Redis) (ctrl.Result, error) {
+
+	r.EventRecord.Event(redis,
+		"Deleting", "删除",
+		fmt.Sprintf("删除 %s", redis.Name),
+	)
 
 	err := helper2.DeleteRedis2(ctx, r.Client, redis)
 	if err != nil {
