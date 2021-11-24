@@ -73,6 +73,6 @@ ka -f deploy/
 在 `make run` 窗口可以看到 调谐 中的输出结果。
 
 ```
-得到crd redis 对象:  {{Redis myapp.tangx.in/v1} {my-op-redis  default  c0e85341-edf3-4261-92da-6a337d473f0c 775203 1 2021-11-19 15:26:53 +0800 CST <nil> <nil> map[] map[kubectl.kubernetes.io/last-applied-configuration:{"apiVersion":"myapp.tangx.in/v1","kind":"Redis","metadata":{"annotations":{},"name":"my-op-redis","namespace":"default"},"spec":{"port":3333,"replicas":1}}
-] [] []  [{kubectl-client-side-apply Update myapp.tangx.in/v1 2021-11-19 15:26:53 +0800 CST FieldsV1 {"f:metadata":{"f:annotations":{".":{},"f:kubectl.kubernetes.io/last-applied-configuration":{}}},"f:spec":{".":{},"f:port":{},"f:replicas":{}}} }]} {1 3333} {}}
+得到crd redis 对象:  { {Redis myapp.tangx.in/v1} {my-op-redis  default  c0e85341-edf3-4261-92da-6a337d473f0c 775203 1 2021-11-19 15:26:53 +0800 CST <nil> <nil> map[] map[kubectl.kubernetes.io/last-applied-configuration:{"apiVersion":"myapp.tangx.in/v1","kind":"Redis","metadata":{"annotations":{},"name":"my-op-redis","namespace":"default"},"spec":{"port":3333,"replicas":1}}
+] [] []  [{kubectl-client-side-apply Update myapp.tangx.in/v1 2021-11-19 15:26:53 +0800 CST FieldsV1 {"f:metadata":{"f:annotations":{".":{},"f:kubectl.kubernetes.io/last-applied-configuration":{}}},"f:spec":{".":{},"f:port":{},"f:replicas":{}}} }]} {1 3333} {} }
 ```
