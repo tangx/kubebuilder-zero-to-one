@@ -24,12 +24,14 @@ import (
 	corev1 "k8s.io/api/core/v1"
 	v1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/client-go/util/workqueue"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/event"
 	"sigs.k8s.io/controller-runtime/pkg/handler"
 	"sigs.k8s.io/controller-runtime/pkg/log"
+	"sigs.k8s.io/controller-runtime/pkg/reconcile"
 	"sigs.k8s.io/controller-runtime/pkg/source"
 
 	myappv1 "github.com/tangx/k8s-operator-demo/api/v1"
@@ -120,10 +122,24 @@ func (r *RedisReconciler) SetupWithManager(mgr ctrl.Manager) error {
 
 func (r *RedisReconciler) podDeleteHandler(e event.DeleteEvent, q workqueue.RateLimitingInterface) {
 
-	pname := e.Object.GetName()
-	pns := e.Object.GetNamespace()
-	fmt.Printf("Pod %s in NS %s 被删除\n", pname, pns)
+	ns := e.Object.GetNamespace()
 
+	for _, owner := range e.Object.GetOwnerReferences() {
+		// 非法 owner 不引起调谐
+		if owner.APIVersion != "myapp.tangx.in/v1" || owner.Kind != "Redis" {
+			continue
+		}
+
+		// 入队， 通知 redis operator 变更， 进行重新 调谐。
+		q.Add(
+			reconcile.Request{
+				NamespacedName: types.NamespacedName{
+					Namespace: ns,
+					Name:      owner.Name,
+				},
+			},
+		)
+	}
 }
 
 func (r *RedisReconciler) increaseReconcile(ctx context.Context, redis *myappv1.Redis) (ctrl.Result, error) {
