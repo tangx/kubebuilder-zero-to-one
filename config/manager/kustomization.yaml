@@ -13,4 +13,4 @@ kind: Kustomization
 images:
 - name: controller
   newName: cr.docker.tangx.in/jtredis/controller
-  newTag: v0.1.10
+  newTag: v0.1.11

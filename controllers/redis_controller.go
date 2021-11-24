@@ -35,7 +35,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/source"
 
 	myappv1 "github.com/tangx/k8s-operator-demo/api/v1"
-	"github.com/tangx/k8s-operator-demo/controllers/helper"
+	"github.com/tangx/k8s-operator-demo/controllers/helper2"
 )
 
 // RedisReconciler reconciles a Redis object
@@ -145,7 +145,7 @@ func (r *RedisReconciler) podDeleteHandler(e event.DeleteEvent, q workqueue.Rate
 func (r *RedisReconciler) increaseReconcile(ctx context.Context, redis *myappv1.Redis) (ctrl.Result, error) {
 
 	// 创建 逻辑
-	err := helper.CreateRedisPod2(ctx, r.Client, redis)
+	err := helper2.CreateRedisPod2(ctx, r.Client, redis, r.Scheme)
 	if err != nil {
 		return ctrl.Result{}, fmt.Errorf("创建 redis pod 失败: %v", err)
 	}
@@ -155,14 +155,14 @@ func (r *RedisReconciler) increaseReconcile(ctx context.Context, redis *myappv1.
 
 func (r *RedisReconciler) decreaseReconcile(ctx context.Context, redis *myappv1.Redis) (ctrl.Result, error) {
 
-	err := helper.DecreaseRedis2(ctx, r.Client, redis)
+	err := helper2.DecreaseRedis2(ctx, r.Client, redis)
 
 	return ctrl.Result{}, err
 }
 
 func (r *RedisReconciler) deleteReconcile(ctx context.Context, redis *myappv1.Redis) (ctrl.Result, error) {
 
-	err := helper.DeleteRedis2(ctx, r.Client, redis)
+	err := helper2.DeleteRedis2(ctx, r.Client, redis)
 	if err != nil {
 		return ctrl.Result{}, fmt.Errorf("删除 redis 失败:%v", err)
 	}
