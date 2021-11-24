@@ -69,16 +69,6 @@ status:
 
 在 `/api/v1/redis_types.go` 中， 使用 `+kubebuilder:printcolumn` 添加需要展示的字段。
 
-展示字段有三个属性:
-
-1. `name`: 名字， 对外展示的名字，可以与实际属性名不一致。 
-2. `type`: 类型， 字段的属性， 例如 `string, bool, integer` 等。
-3. `JSONPath`: 属性路径。 可以通过 `kg redis <name> -o json` 查看属性实际路径。
-
-> 注意: 展示属性可以是资源对象中的任意属性， 不一定非的是 Status
-
-下述代码中， 分别展示了 `.status.replicas`, `.spec.image`, `.metadata.uid` 以及一个 **不存在的 `.spec.alias` 
-
 ```go
 //+kubebuilder:object:root=true
 //+kubebuilder:subresource:status
@@ -88,6 +78,15 @@ status:
 //+kubebuilder:printcolumn:name="Alias",type=string,JSONPath=`.spec.alias`
 ```
 
+上述代码中， 分别展示了 `.status.replicas`, `.spec.image`, `.metadata.uid` 以及一个 **不存在的 `.spec.alias` 
+
+展示字段有三个属性:
+
+1. `name`: 名字， 对外展示的名字，可以与实际属性名不一致。 
+2. `type`: 类型， 字段的属性， 例如 `string, bool, integer` 等。
+3. `JSONPath`: 属性路径。 可以通过 `kg redis <name> -o json` 查看属性实际路径。
+
+> 注意: 展示属性可以是资源对象中的任意属性， 不一定非的是 Status
 
 编译发布，并测试
 
