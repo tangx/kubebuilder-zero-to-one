@@ -16,7 +16,20 @@ spec:
     singular: redis
   scope: Namespaced
   versions:
-  - name: v1
+  - additionalPrinterColumns:
+    - jsonPath: .status.replicas
+      name: Replicas
+      type: integer
+    - jsonPath: .spec.image
+      name: ImageName
+      type: string
+    - jsonPath: .metadata.uid
+      name: Uuid
+      type: string
+    - jsonPath: .spec.alias
+      name: Alias
+      type: string
+    name: v1
     schema:
       openAPIV3Schema:
         description: Redis is the Schema for the redis API
@@ -48,6 +61,14 @@ spec:
             type: object
           status:
             description: RedisStatus defines the observed state of Redis
+            properties:
+              replicas:
+                description: 'INSERT ADDITIONAL STATUS FIELD - define observed state
+                  of cluster Important: Run "make" to regenerate code after modifying
+                  this file'
+                type: integer
+            required:
+            - replicas
             type: object
         type: object
     served: true

@@ -71,8 +71,15 @@ func (r *RedisReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl
 
 	// TODO(user): your logic here
 
-	redis := myappv1.Redis{}
-	err := r.Get(ctx, req.NamespacedName, &redis)
+	redis := &myappv1.Redis{}
+	defer func() {
+		// 状态赋值
+		redis.Status.Replicas = len(redis.Finalizers)
+		// 状态更新，偷懒忽略错误判断
+		_ = r.Status().Update(ctx, redis)
+	}()
+
+	err := r.Get(ctx, req.NamespacedName, redis)
 	if err != nil {
 		// 如果 err !=nil , k8s 调谐会不断重试。 因此找不到资源， 则直接返回 err=nil
 		// return ctrl.Result{}, fmt.Errorf("Reconcile 获取 redis 失败: %v", err)
@@ -88,15 +95,15 @@ func (r *RedisReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl
 	// IsZero 标识这个字段为 nil 或者 零值， 即非删除状态
 	// 删除状态则 取反
 	if !redis.DeletionTimestamp.IsZero() {
-		return r.deleteReconcile(ctx, &redis)
+		return r.deleteReconcile(ctx, redis)
 	}
 
 	// 缩容
 	if len(redis.Finalizers) > redis.Spec.Replicas {
-		return r.decreaseReconcile(ctx, &redis)
+		return r.decreaseReconcile(ctx, redis)
 	}
 
-	return r.increaseReconcile(ctx, &redis)
+	return r.increaseReconcile(ctx, redis)
 
 }
 
