@@ -1,4 +1,6 @@
-# k8s-operator-demo
+# kubebuilder 从 0 到 1
+
+从 0 开始写一个 Redis Operator
 
 # 目录
 
@@ -17,4 +19,9 @@
 11. [使用 controllerutil 优化代码](./11-official-package-optimize.md)
 12. [增加 event 事件支持](./12-add-event.md)
 13. [添加 Status 状态字段](./13-add-status.md)
+
+
+## feed
+
+![image](https://tangx.in/assets/images/wx-qrcode.png)
 
