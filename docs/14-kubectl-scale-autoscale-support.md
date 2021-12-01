@@ -1,10 +1,22 @@
-# 支持 kubectl scale 和 kubectl autoscale
+# 支持 kubectl scale 和 kubectl autoscale 命令
 
+在 k8s 自定义资源中有关于 scale 和 hpa 的 `subresources` 字段， 只有这些字段被定义的时候才能支持 `scale 和 autoscale` 命令
+
+官方定义如下
 > https://kubernetes.io/zh/docs/tasks/extend-kubernetes/custom-resources/custom-resource-definitions/#scale-subresource
 
-在 `//+kubebuilder:subresource:status` 下方
 
-使用 `//+kubebuilder:subresource:scale` 增加注解， 三个关键字段
+在 kubebuilde 中， 使用 `//+kubebuilder:subresource:scale` 增加注解， 生成对应的配置。
+
+注意， 未知需要在 `//+kubebuilder:subresource:status` 下方
+
+```go
+//+kubebuilder:object:root=true
+//+kubebuilder:subresource:status
+//+kubebuilder:subresource:scale:specpath=.spec.replicas,statuspath=.status.replicas,selectorpath=.status.selector
+```
+
+三个关键字段:
 
 1. `specpath`: `specReplicasPath` 指定定制资源内与 `scale.spec.replicas` 对应的 JSON 路径。
     + 此字段为 **必需值** 。
@@ -23,13 +35,6 @@
     + 如果定制资源的 labelSelectorPath 下没有取值，则针对 /scale 子资源的 选择算符状态值默认为空字符串。
     + 此 JSON 路径所指向的字段必须是一个字符串字段（而不是复合的选择算符结构）， 其中包含标签选择算符串行化的字符串形式。
 
-```go
-
-//+kubebuilder:object:root=true
-//+kubebuilder:subresource:status
-//+kubebuilder:subresource:scale:specpath=.spec.replicas,statuspath=.status.replicas,selectorpath=.status.selector
-
-```
 
 使用之后 `make install` 编译之后, 可以在 `subresources` 下找到响应字段。
 

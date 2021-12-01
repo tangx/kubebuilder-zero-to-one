@@ -17,3 +17,4 @@
 11. [使用 controllerutil 优化代码](./docs/11-official-package-optimize.md)
 12. [增加 event 事件支持](./docs/12-add-event.md)
 13. [添加 Status 状态字段](./docs/13-add-status.md)
+13. [支持 kubectl scale 和 kubectl autoscale 命令](./docs/14-kubectl-scale-autoscale-support.md)
