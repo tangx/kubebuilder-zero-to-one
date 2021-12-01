@@ -46,6 +46,7 @@ type RedisStatus struct {
 
 //+kubebuilder:object:root=true
 //+kubebuilder:subresource:status
+//+kubebuilder:subresource:scale:specpath=.spec.replicas,statuspath=.status.replicas,selectorpath=.spec.selector
 //+kubebuilder:printcolumn:name="Replicas",type=integer,JSONPath=`.status.replicas`
 //+kubebuilder:printcolumn:name="ImageName",type=string,JSONPath=`.spec.image`
 //+kubebuilder:printcolumn:name="Uuid",type=string,JSONPath=`.metadata.uid`
