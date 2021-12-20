@@ -7,8 +7,8 @@
 5. [通过 webhook 进行字段验证](./05-filed-validation-by-webhook.md)
 6. [使用 Operator 创建并发布一个 Pod](./06-create-pod-by-redis-operator.md)
 7. K8S 父子资源删除管理
-    1. [使用 OwnerReference 管理 redis operator 创建的 Pod](./07.1-delete-pod-by-redis-OwnerReference.md)
-    2. [使用 finalizers 管理 redis operator 创建的 Pod](./07.2-delete-pod-by-finalizers.md)
+    1. [使用 OwnerReference 管理 redis operator 创建的 Pod](./07-1-delete-pod-by-redis-OwnerReference.md)
+    2. [使用 finalizers 管理 redis operator 创建的 Pod](./07-2-delete-pod-by-finalizers.md)
 8. [Pod 扩容与缩容](./08-scale-pod.md)
 9. [监听 k8s 事件](./09-watch-k8s-event.md)
 10. [重建被删除的 Pod](./10-recreate-deleted-pod.md)

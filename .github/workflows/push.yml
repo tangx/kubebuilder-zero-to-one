@@ -1,0 +1,56 @@
+name: hugo-book auto build 
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v1
+        with:
+          submodules: true
+
+      # https://github.com/actions/checkout#checkout-multiple-repos-nested
+      - name: Checkout hugo-builder
+        uses: actions/checkout@v2
+        with:
+          repository: tangx/hugobook-builder
+          path: hugobook-builder
+
+      - name: create blog
+        run: |
+          find ./ -maxdepth 2
+          env
+          cp -a ./docs/* hugobook-builder/content/
+          cp README.md hugobook-builder/content/_index.md
+
+      - name: show env
+        run: |
+          env
+
+      - name: Setup Hugo
+        uses: peaceiris/actions-hugo@v2
+        with:
+          hugo-version: '0.84.0'
+          extended: true
+
+      - name: Build
+        run: |
+          cd hugobook-builder
+          hugo --gc --minify --cleanDestinationDir --baseURL=https://books.tangx.in/kubebuilder-zero-to-one/
+          touch public/.nojekyll
+
+      - name: Pushes to another repository
+        uses: cpina/github-action-push-to-another-repository@main
+        env:
+          API_TOKEN_GITHUB: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          source-directory: 'hugobook-builder/public'
+          destination-github-username: 'tangx'
+          destination-repository-name: 'hugobook'
+          user-email: uyinn@live.com
+          target-branch: master
+          target-directory: '/kubebuilder-zero-to-one'
