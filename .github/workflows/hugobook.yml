@@ -17,7 +17,7 @@ jobs:
       - name: Checkout hugo-builder
         uses: actions/checkout@v2
         with:
-          repository: tangx/hugobook-builder
+          repository: tangx/geekdoc-hugo-book-builder
           path: hugobook-builder
 
       - name: create blog
@@ -40,7 +40,7 @@ jobs:
       - name: Build
         run: |
           cd hugobook-builder
-          hugo --gc --minify --cleanDestinationDir --baseURL=https://books.tangx.in/kubebuilder-zero-to-one/
+          hugo --gc --minify --cleanDestinationDir 
           touch public/.nojekyll
 
       - name: Pushes to another repository
