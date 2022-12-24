@@ -23,3 +23,8 @@ enableRobotsTXT = true
 
 [taxonomies]
    tag = "tags"
+
+# 去除静态文件前缀
+# md 文件为了引用公共文件， 使用了项目级别绝对路径 /docs/static/logo.png
+[params.static_prefix]
+  name = "/docs"

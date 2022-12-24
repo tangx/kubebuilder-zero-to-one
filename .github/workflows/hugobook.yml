@@ -27,7 +27,6 @@ jobs:
           cp -a ./docs/* hugobook-builder/content/
           cp -a ./docs/config.toml hugobook-builder/
           cp README.md hugobook-builder/content/_index.md
-          cd hugobook-builder/content/ && bash prepare.sh
 
       - name: show env
         run: |
